@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlock Surprise - Accessing Secret System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+
+<body>
+    <div id="loading-screen" class="active">
+        <div class="matrix-rain" id="matrix-canvas-container">
+            <canvas id="matrix-canvas"></canvas>
+        </div>
+        <div class="loading-content">
+            <h2 class="glitch" data-text="SYSTEM BOOT SEQUENCE INITIATED">SYSTEM BOOT SEQUENCE INITIATED</h2>
+            <div class="progress-container">
+                <div class="progress-bar" id="boot-progress"></div>
+            </div>
+            <p id="loading-text">Loading modules...</p>
+        </div>
+    </div>
+
+    <div id="scanline"></div>
+    <div id="terminal" class="hidden">
+        <div id="output"></div>
+
+        <div id="input-line" class="hidden">
+            <span id="prompt">></span>
+            <input type="password" id="command-input" autofocus autocomplete="off" spellcheck="false">
+        </div>
+    </div>
+
+    <!-- Hidden audio elements -->
+    <audio id="keypress-sound" src="assets/sounds/keypress.mp3"></audio>
+    <audio id="access-granted-sound" src="assets/sounds/granted.mp3"></audio>
+    <audio id="access-denied-sound" src="assets/sounds/denied.mp3"></audio>
+    <audio id="romantic-music" src="assets/sounds/music.mp3" loop></audio>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
