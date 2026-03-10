@@ -63,14 +63,14 @@ async function simulateLoading() {
 
 const messages = {
     login: [
-        "MENGIKUTI AKSES SISTEM RAHASIA...",
+        "MENGIKUTI AKSES SISTEM AYU WARESTU...",
         "MEMUAT FILE MEMORI...",
-        "SELAMAT DATANG DI SERVER ULANG TAHUN RAHASIA",
+        "SELAMAT DATANG DI SERVER ULANG TAHUN AYU WARESTU",
         "MASUKKAN KATA SANDI UNTUK MELANJUTKAN"
     ],
     granted: [
         "AKSES DIIZINKAN",
-        "SELAMAT DATANG DI FILE RAHASIA",
+        "SELAMAT DATANG DI FILE AYU WARESTU",
         "MENDETEKSI TANGGAL ISTIMEWA..."
     ],
     denied: [
@@ -151,7 +151,7 @@ function startCountdown() {
 
         if (distance < 0) {
             clearInterval(interval);
-            timerDiv.innerHTML = '<button id="unlock-btn">BUKA KEJUTAN RAHASIA</button>';
+            timerDiv.innerHTML = '<button id="unlock-btn">BUKA KEJUTAN AYU WARESTU</button>';
             document.getElementById('unlock-btn').addEventListener('click', startMissions);
         }
     }, 1000);
