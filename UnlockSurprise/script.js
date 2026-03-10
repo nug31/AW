@@ -91,8 +91,16 @@ const messages = {
         "[2] BEST MOMENTS",
         "[3] FAVORITE MEMORIES",
         "[4] SECRET MESSAGE",
+        "[5] AI CHAT",
         "",
-        "PILIH NOMOR FILE (1-4):"
+        "PILIH NOMOR FILE (1-5):"
+    ],
+    aiGreeting: [
+        "MENGAKTIFKAN AI GIRLFRIEND PROTOCOL...",
+        "MEMUAT DATA KEPRIBADIAN...",
+        "STATUS: ONLINE",
+        "",
+        "AI: Halo sayang! ❤️ Ada yang mau kamu obrolin? (Ketik 'EXIT' untuk keluar)"
     ]
 };
 
@@ -301,10 +309,64 @@ async function handleDatabaseSelection(choice) {
         await typeWriter("\n-- TEKAN ENTER UNTUK KEMBALI KE MENU --\n");
     } else if (choice === '4') {
         await showSecretMessage();
+    } else if (choice === '5') {
+        await startAiChat();
     } else {
         await typeWriter("INVALID SELECTION. RETURNING TO MENU...");
         setTimeout(showDatabaseMenu, 1500);
     }
+}
+
+async function startAiChat() {
+    output.innerHTML = '';
+    currentState = 'ai_chat';
+    await showSequence(messages.aiGreeting);
+}
+
+const aiResponses = [
+    { keywords: ['KANGEN', 'RINDU', 'MISS'], responses: ["Aku juga kangen banget sama kamu! ❤️", "Miss you too boo! Kapan kita ketemu lagi? 🥰", "Uhh, kangen berat! Pengen peluk! 🤗"] },
+    { keywords: ['SAYANG', 'CINTA', 'LOVE'], responses: ["I love you more! ❤️", "Sayang kamu juga! Selalu dan selamanya! 💕", "Hehe, kamu manis banget sih... I love you! 😘"] },
+    { keywords: ['HALO', 'HAI', 'HELLO', 'HI'], responses: ["Halo ganteng! Ada apa? 😊", "Hai sayang! Gimana harimu? ❤️", "Hiii! Kangen aku ya? 😉"] },
+    { keywords: ['CANTIK', 'MANIS', 'BEAUTIFUL'], responses: ["Aww, makasih sayang! Kamu juga paling ganteng! 🥰", "Bisa aja ihh... jadi malu 😳❤️", "Hehe, makasih pujiannya boo! 💕"] },
+    { keywords: ['TIDUR', 'SLEEP', 'MALAM', 'NIGHT'], responses: ["Selamat malam sayang! Mimpi indah ya... ❤️", "Good night! Have a sweet dream boo... 😘", "Tidur yang nyenyak ya cantik/ganteng, miss you! 🌙"] }
+];
+
+const fallbackResponses = [
+    "Hehe, iya sayang? ❤️",
+    "Aww, kamu lucu banget sih! 🥰",
+    "Oh ya? Cerita lagi dong... aku dengerin nih 😊",
+    "Hmm... I love you! ❤️",
+    "Bikin gemes aja deh kamu ini! 😘"
+];
+
+async function handleAiChat(input) {
+    if (input === 'EXIT') {
+        output.innerHTML = '';
+        await typeWriter("AI GIRLFRIEND OFFLINE.");
+        setTimeout(showDatabaseMenu, 1500);
+        return;
+    }
+
+    // Display user input
+    await typeWriter(`KAMU: ${input}`, 20);
+
+    // Determine AI response
+    let responseText = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+
+    for (const rule of aiResponses) {
+        if (rule.keywords.some(keyword => input.includes(keyword))) {
+            responseText = rule.responses[Math.floor(Math.random() * rule.responses.length)];
+            break;
+        }
+    }
+
+    // Typing delay simulation
+    await new Promise(resolve => setTimeout(resolve, 800));
+    await typeWriter(`AI: ${responseText}`, 30);
+
+    // Add prompt indicator back
+    output.innerHTML += '<br>';
+    output.scrollTop = output.scrollHeight;
 }
 
 async function showSecretMessage() {
