@@ -63,7 +63,7 @@ async function simulateLoading() {
 
 const messages = {
     login: [
-        "MENGIKUTI AKSES SISTEM AYU WARESTU...",
+        "MENGIKUTI AKSES SISTEM RAHASIA...",
         "MEMUAT FILE MEMORI...",
         "SELAMAT DATANG DI SERVER ULANG TAHUN AYU WARESTU",
         "MASUKKAN KATA SANDI UNTUK MELANJUTKAN"
@@ -91,16 +91,8 @@ const messages = {
         "[2] BEST MOMENTS",
         "[3] FAVORITE MEMORIES",
         "[4] SECRET MESSAGE",
-        "[5] AI CHAT",
         "",
-        "PILIH NOMOR FILE (1-5):"
-    ],
-    aiGreeting: [
-        "MENGAKTIFKAN AI BOYFRIEND PROTOCOL...",
-        "MEMUAT DATA KEPRIBADIAN...",
-        "STATUS: ONLINE",
-        "",
-        "AI: Halo cantik! ❤️ Ada yang mau kamu obrolin? (Ketik 'EXIT' untuk keluar)"
+        "PILIH NOMOR FILE (1-4):"
     ]
 };
 
@@ -128,7 +120,7 @@ async function showSequence(sequence) {
         await typeWriter(line);
         await new Promise(resolve => setTimeout(resolve, 500));
     }
-    if (currentState === 'login' || currentState === 'denied' || currentState === 'database_menu' || currentState === 'ai_chat') {
+    if (currentState === 'login' || currentState === 'denied' || currentState === 'database_menu') {
         inputLine.classList.remove('hidden');
         commandInput.type = "text";
         commandInput.focus();
@@ -309,64 +301,10 @@ async function handleDatabaseSelection(choice) {
         await typeWriter("\n-- TEKAN ENTER UNTUK KEMBALI KE MENU --\n");
     } else if (choice === '4') {
         await showSecretMessage();
-    } else if (choice === '5') {
-        await startAiChat();
     } else {
         await typeWriter("INVALID SELECTION. RETURNING TO MENU...");
         setTimeout(showDatabaseMenu, 1500);
     }
-}
-
-async function startAiChat() {
-    output.innerHTML = '';
-    currentState = 'ai_chat';
-    await showSequence(messages.aiGreeting);
-}
-
-const aiResponses = [
-    { keywords: ['KANGEN', 'RINDU', 'MISS'], responses: ["Aku juga kangen banget sama kamu cantik! ❤️", "Miss you too boo! Pengen peluk kenceng-kenceng! �", "Uhh, pacarku kangen ya? Sabar ya sayang... �"] },
-    { keywords: ['SAYANG', 'CINTA', 'LOVE'], responses: ["I love you more manis! ❤️", "Sayang kamu juga! Selalu dan selamanya sayang! 💕", "Hehe, cewekku ini manis banget sih... I love you! 😘"] },
-    { keywords: ['HALO', 'HAI', 'HELLO', 'HI'], responses: ["Halo cantik! Ada apa? 😊", "Hai sayang! Gimana harimu? Masih capek kah? ❤️", "Hiii! Kangen aku ya pacarku yang bawel? 😉"] },
-    { keywords: ['GANTENG', 'CAKEP', 'TAMPAN'], responses: ["Aww, makasih sayang! Kamu juga paling cantik sedunia! 🥰", "Bisa aja pacarku ini... jadi salting cowokmu 😳❤️", "Hehe, makasih pujiannya boo! 💕"] },
-    { keywords: ['TIDUR', 'SLEEP', 'MALAM', 'NIGHT'], responses: ["Selamat malam sayang! Mimpi indah ya... ❤️", "Good night cantik! Have a sweet dream... 😘", "Tidur yang nyenyak ya pacarku, jangan lupa mimpiin aku! 🌙"] }
-];
-
-const fallbackResponses = [
-    "Hehe, iya sayang? ❤️",
-    "Aww, kamu lucu banget sih! 🥰",
-    "Oh ya? Cerita lagi dong... aku dengerin nih 😊",
-    "Hmm... I love you! ❤️",
-    "Bikin gemes aja deh kamu ini! 😘"
-];
-
-async function handleAiChat(input) {
-    if (input === 'EXIT') {
-        output.innerHTML = '';
-        await typeWriter("AI BOYFRIEND OFFLINE.");
-        setTimeout(showDatabaseMenu, 1500);
-        return;
-    }
-
-    // Display user input
-    await typeWriter(`KAMU: ${input}`, 20);
-
-    // Determine AI response
-    let responseText = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
-
-    for (const rule of aiResponses) {
-        if (rule.keywords.some(keyword => input.includes(keyword))) {
-            responseText = rule.responses[Math.floor(Math.random() * rule.responses.length)];
-            break;
-        }
-    }
-
-    // Typing delay simulation
-    await new Promise(resolve => setTimeout(resolve, 800));
-    await typeWriter(`AI: ${responseText}`, 30);
-
-    // Add prompt indicator back
-    output.innerHTML += '<br>';
-    output.scrollTop = output.scrollHeight;
 }
 
 async function showSecretMessage() {
