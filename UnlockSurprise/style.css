@@ -374,6 +374,14 @@ body.romantic {
     text-shadow: 0 0 5px var(--glow-color);
 }
 
+.days-together {
+    font-size: 1.2rem;
+    color: #ff4d6d;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px #ff4d6d;
+    animation: fadeIn 2s forwards;
+}
+
 #unlock-btn {
     background: var(--text-color);
     color: #000;
@@ -388,4 +396,19 @@ body.romantic {
 
 #unlock-btn:hover {
     transform: scale(1.05);
+}
+
+/* Secret Message Styles */
+.secret-message {
+    border: 1px dashed var(--text-color);
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+    background: rgba(0, 50, 0, 0.2);
+    font-style: italic;
+    animation: fadeIn 1.5s forwards;
+}
+
+.secret-message p {
+    margin: 5px 0;
 }

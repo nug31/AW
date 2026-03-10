@@ -76,8 +76,31 @@ const messages = {
     denied: [
         "AKSES DITOLAK",
         "COBA LAGI"
+    ],
+    scanner: [
+        "SCANNING HEART...",
+        "ANALYZING EMOTIONS...",
+        "LOVE LEVEL: 100%",
+        "STATUS: FOREVER",
+        "MEMBUKA LOVE DATABASE..."
+    ],
+    databaseMenu: [
+        "LOVE DATABASE",
+        "",
+        "[1] FIRST MEETING",
+        "[2] BEST MOMENTS",
+        "[3] FAVORITE MEMORIES",
+        "[4] SECRET MESSAGE",
+        "",
+        "PILIH NOMOR FILE (1-4):"
     ]
 };
+
+// Days together counter (e.g. from an arbitrary date like Jan 1, 2023)
+const startDate = new Date("January 1, 2023 00:00:00").getTime();
+function getDaysTogether() {
+    return Math.floor((new Date().getTime() - startDate) / (1000 * 60 * 60 * 24));
+}
 
 async function typeWriter(text, speed = 50) {
     const p = document.createElement('div');
@@ -133,7 +156,7 @@ function startCountdown() {
     const timerDiv = document.getElementById('countdown-timer');
 
     // Set target date (e.g., 2026-03-22)
-    const targetDate = new Date("March 17, 2026 00:00:00").getTime();
+    const targetDate = new Date("March 10, 2026 00:00:00").getTime();
 
     const interval = setInterval(() => {
         const now = new Date().getTime();
@@ -151,10 +174,43 @@ function startCountdown() {
 
         if (distance < 0) {
             clearInterval(interval);
-            timerDiv.innerHTML = '<button id="unlock-btn">BUKA KEJUTAN AYU WARESTU</button>';
-            document.getElementById('unlock-btn').addEventListener('click', startMissions);
+            timerDiv.innerHTML = `
+                <div class="days-together">BERSAMA SELAMA: ${getDaysTogether()} HARI</div>
+                <button id="unlock-btn">BUKA KEJUTAN</button>
+            `;
+            document.getElementById('unlock-btn').addEventListener('click', startScanner);
         }
     }, 1000);
+}
+
+// Extended Modules state handling
+async function startScanner() {
+    output.innerHTML = '';
+    inputLine.classList.add('hidden');
+    currentState = 'scanning';
+
+    // Simulate Love Meter Scanner
+    for (const msg of messages.scanner) {
+        if (msg.includes("100%")) {
+            // make text blink or look special
+            const div = document.createElement('div');
+            div.className = 'glitch';
+            div.dataset.text = msg;
+            div.textContent = msg;
+            output.appendChild(div);
+        } else {
+            await typeWriter(msg);
+        }
+        await new Promise(resolve => setTimeout(resolve, 800));
+    }
+
+    setTimeout(showDatabaseMenu, 1000);
+}
+
+async function showDatabaseMenu() {
+    output.innerHTML = '';
+    currentState = 'database_menu';
+    await showSequence(messages.databaseMenu);
 }
 
 const missions = [
@@ -185,10 +241,84 @@ function handleInput(e) {
                 currentState = 'denied';
                 showSequence(messages.denied);
             }
-        } else if (currentState.startsWith('mission')) {
-            checkMissionAnswer(input);
+        } else if (currentState === 'database_menu') {
+            handleDatabaseSelection(input);
+        } else if (currentState === 'video_prompt') {
+            if (input === 'Y') {
+                showFinalSurprise();
+            } else {
+                showSequence(["VIDEO UNLOCK CANCELED. TYPE 'Y' TO UNLOCK."]);
+            }
+        } else if (currentState === 'reading_database') {
+            // press any key (mapped to enter here) to go back to menu
+            showDatabaseMenu();
         }
     }
+}
+
+let databaseCompletion = { 1: false, 2: false, 3: false };
+
+async function handleDatabaseSelection(choice) {
+    currentState = 'reading_database';
+    output.innerHTML = '';
+
+    if (choice === '1' || choice === '2' || choice === '3') {
+        databaseCompletion[choice] = true;
+        const memoryIndex = parseInt(choice) - 1;
+
+        // Show simulated memory decrypt
+        await typeWriter(`ACCESSING FILE [${choice}]...`);
+        output.innerHTML += '<div class="progress-container progress-inline"><div class="progress-bar" id="decrypt-progress"></div></div>';
+        const pBar = document.getElementById('decrypt-progress');
+        for (let i = 0; i <= 100; i += 20) {
+            pBar.style.width = i + '%';
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+        await typeWriter("DEKRIPSI SELESAI.");
+
+        const photoArr = ['memory1.jpg', 'memory2.jpg', 'memory3.jpg'];
+        await showMemory(`assets/images/${photoArr[memoryIndex]}`);
+        await typeWriter("\n-- TEKAN ENTER UNTUK KEMBALI KE MENU --\n");
+    } else if (choice === '4') {
+        await showSecretMessage();
+    } else {
+        await typeWriter("INVALID SELECTION. RETURNING TO MENU...");
+        setTimeout(showDatabaseMenu, 1500);
+    }
+}
+
+async function showSecretMessage() {
+    await typeWriter("EXTRACTING secret_message.txt...");
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    output.innerHTML = '';
+    const secretDiv = document.createElement('div');
+    secretDiv.className = 'secret-message';
+    secretDiv.innerHTML = `
+        <p>If you are reading this,</p>
+        <p>it means you unlocked my heart.</p>
+        <br>
+        <p>Happy Birthday ❤️</p>
+        <p>Thank you for being part of my life.</p>
+    `;
+    output.appendChild(secretDiv);
+
+    // Check if ready for video phase
+    if (databaseCompletion[1] && databaseCompletion[2] && databaseCompletion[3]) {
+        setTimeout(triggerVideoPrompt, 4000);
+    } else {
+        await typeWriter("\n-- TEKAN ENTER UNTUK KEMBALI KE MENU --\n");
+    }
+}
+
+async function triggerVideoPrompt() {
+    output.innerHTML = '';
+    currentState = 'video_prompt';
+    await typeWriter("FINAL FILE DETECTED...");
+    await typeWriter("VIDEO_MESSAGE.MP4");
+    await typeWriter("UNLOCK? (Y/N)");
+    inputLine.classList.remove('hidden');
+    commandInput.type = "text";
+    commandInput.focus();
 }
 
 async function checkMissionAnswer(answer) {
@@ -235,11 +365,24 @@ async function showMemory(src) {
     await new Promise(resolve => setTimeout(resolve, 1500));
     img.classList.remove('decrypting');
 }
-
 function startNextMission() {
     const nextMission = missions[currentMissionIndex];
     currentState = `mission${currentMissionIndex + 1}`;
     typeWriter(nextMission.question);
+}
+
+function startMissions() {
+    output.innerHTML = '';
+
+    // Clear the countdown interval if it's still running
+    // and make sure we remove the input hidden class
+    inputLine.classList.remove('hidden');
+    commandInput.type = "text";
+    commandInput.focus();
+
+    currentState = 'mission1';
+    currentMissionIndex = 0;
+    typeWriter(missions[currentMissionIndex].question);
 }
 
 async function showFinalSurprise() {
@@ -273,8 +416,9 @@ function showFinalGallery() {
             <img src="assets/images/photo3.jpg" alt="Photo 3">
         </div>
         <div class="video-container">
-            <video controls width="100%">
+            <video controls autoplay width="100%">
                 <source src="assets/videos/birthday.mp4" type="video/mp4">
+                Your browser does not support the video tag.
             </video>
         </div>
     `;
