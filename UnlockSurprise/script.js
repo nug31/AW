@@ -120,8 +120,9 @@ async function showSequence(sequence) {
         await typeWriter(line);
         await new Promise(resolve => setTimeout(resolve, 500));
     }
-    if (currentState === 'login' || currentState === 'denied') {
+    if (currentState === 'login' || currentState === 'denied' || currentState === 'database_menu') {
         inputLine.classList.remove('hidden');
+        commandInput.type = "text";
         commandInput.focus();
     }
 }
@@ -139,6 +140,21 @@ function handleInput(e) {
                 currentState = 'denied';
                 showSequence(messages.denied);
             }
+        } else if (currentState === 'database_menu') {
+            handleDatabaseSelection(input);
+        } else if (currentState === 'video_prompt') {
+            if (input === 'Y') {
+                showFinalSurprise();
+            } else {
+                showSequence(["VIDEO UNLOCK CANCELED. TYPE 'Y' TO UNLOCK."]);
+                // Return to prompt slightly faster if rejected
+                setTimeout(triggerVideoPrompt, 3000);
+            }
+        } else if (currentState === 'reading_database') {
+            // press any key (mapped to enter here) to go back to menu
+            showDatabaseMenu();
+        } else if (currentState.startsWith('mission')) {
+            checkMissionAnswer(input);
         }
     }
 }
@@ -248,10 +264,14 @@ function handleInput(e) {
                 showFinalSurprise();
             } else {
                 showSequence(["VIDEO UNLOCK CANCELED. TYPE 'Y' TO UNLOCK."]);
+                // Return to prompt slightly faster if rejected
+                setTimeout(triggerVideoPrompt, 3000);
             }
         } else if (currentState === 'reading_database') {
             // press any key (mapped to enter here) to go back to menu
             showDatabaseMenu();
+        } else if (currentState.startsWith('mission')) {
+            checkMissionAnswer(input);
         }
     }
 }
