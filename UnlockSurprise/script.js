@@ -96,11 +96,11 @@ const messages = {
         "PILIH NOMOR FILE (1-5):"
     ],
     aiGreeting: [
-        "MENGAKTIFKAN AI GIRLFRIEND PROTOCOL...",
+        "MENGAKTIFKAN AI BOYFRIEND PROTOCOL...",
         "MEMUAT DATA KEPRIBADIAN...",
         "STATUS: ONLINE",
         "",
-        "AI: Halo sayang! ❤️ Ada yang mau kamu obrolin? (Ketik 'EXIT' untuk keluar)"
+        "AI: Halo cantik! ❤️ Ada yang mau kamu obrolin? (Ketik 'EXIT' untuk keluar)"
     ]
 };
 
@@ -324,11 +324,11 @@ async function startAiChat() {
 }
 
 const aiResponses = [
-    { keywords: ['KANGEN', 'RINDU', 'MISS'], responses: ["Aku juga kangen banget sama kamu! ❤️", "Miss you too boo! Kapan kita ketemu lagi? 🥰", "Uhh, kangen berat! Pengen peluk! 🤗"] },
-    { keywords: ['SAYANG', 'CINTA', 'LOVE'], responses: ["I love you more! ❤️", "Sayang kamu juga! Selalu dan selamanya! 💕", "Hehe, kamu manis banget sih... I love you! 😘"] },
-    { keywords: ['HALO', 'HAI', 'HELLO', 'HI'], responses: ["Halo ganteng! Ada apa? 😊", "Hai sayang! Gimana harimu? ❤️", "Hiii! Kangen aku ya? 😉"] },
-    { keywords: ['CANTIK', 'MANIS', 'BEAUTIFUL'], responses: ["Aww, makasih sayang! Kamu juga paling ganteng! 🥰", "Bisa aja ihh... jadi malu 😳❤️", "Hehe, makasih pujiannya boo! 💕"] },
-    { keywords: ['TIDUR', 'SLEEP', 'MALAM', 'NIGHT'], responses: ["Selamat malam sayang! Mimpi indah ya... ❤️", "Good night! Have a sweet dream boo... 😘", "Tidur yang nyenyak ya cantik/ganteng, miss you! 🌙"] }
+    { keywords: ['KANGEN', 'RINDU', 'MISS'], responses: ["Aku juga kangen banget sama kamu cantik! ❤️", "Miss you too boo! Pengen peluk kenceng-kenceng! �", "Uhh, pacarku kangen ya? Sabar ya sayang... �"] },
+    { keywords: ['SAYANG', 'CINTA', 'LOVE'], responses: ["I love you more manis! ❤️", "Sayang kamu juga! Selalu dan selamanya sayang! 💕", "Hehe, cewekku ini manis banget sih... I love you! 😘"] },
+    { keywords: ['HALO', 'HAI', 'HELLO', 'HI'], responses: ["Halo cantik! Ada apa? 😊", "Hai sayang! Gimana harimu? Masih capek kah? ❤️", "Hiii! Kangen aku ya pacarku yang bawel? 😉"] },
+    { keywords: ['GANTENG', 'CAKEP', 'TAMPAN'], responses: ["Aww, makasih sayang! Kamu juga paling cantik sedunia! 🥰", "Bisa aja pacarku ini... jadi salting cowokmu 😳❤️", "Hehe, makasih pujiannya boo! 💕"] },
+    { keywords: ['TIDUR', 'SLEEP', 'MALAM', 'NIGHT'], responses: ["Selamat malam sayang! Mimpi indah ya... ❤️", "Good night cantik! Have a sweet dream... 😘", "Tidur yang nyenyak ya pacarku, jangan lupa mimpiin aku! 🌙"] }
 ];
 
 const fallbackResponses = [
@@ -342,7 +342,7 @@ const fallbackResponses = [
 async function handleAiChat(input) {
     if (input === 'EXIT') {
         output.innerHTML = '';
-        await typeWriter("AI GIRLFRIEND OFFLINE.");
+        await typeWriter("AI BOYFRIEND OFFLINE.");
         setTimeout(showDatabaseMenu, 1500);
         return;
     }
