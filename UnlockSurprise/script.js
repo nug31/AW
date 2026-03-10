@@ -105,7 +105,7 @@ const messages = {
 };
 
 // Days together counter (e.g. from an arbitrary date like Jan 1, 2023)
-const startDate = new Date("January 1, 2023 00:00:00").getTime();
+const startDate = new Date("January 17, 2026 00:00:00").getTime();
 function getDaysTogether() {
     return Math.floor((new Date().getTime() - startDate) / (1000 * 60 * 60 * 24));
 }
@@ -128,7 +128,7 @@ async function showSequence(sequence) {
         await typeWriter(line);
         await new Promise(resolve => setTimeout(resolve, 500));
     }
-    if (currentState === 'login' || currentState === 'denied' || currentState === 'database_menu') {
+    if (currentState === 'login' || currentState === 'denied' || currentState === 'database_menu' || currentState === 'ai_chat') {
         inputLine.classList.remove('hidden');
         commandInput.type = "text";
         commandInput.focus();
