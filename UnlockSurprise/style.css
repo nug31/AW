@@ -30,6 +30,20 @@ body.romantic {
     color: var(--romantic-text);
 }
 
+#dynamic-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+    transition: background-image 1.5s ease-in-out, opacity 1s ease;
+    opacity: 0.4;
+    filter: blur(5px) brightness(0.6);
+}
+
 /* Loading Screen Styles */
 #loading-screen {
     position: fixed;
@@ -232,7 +246,9 @@ body.romantic {
     padding: 20px;
     border: 1px solid var(--text-color);
     box-shadow: 0 0 15px var(--glow-color);
-    background: rgba(0, 20, 0, 0.8);
+    background: rgba(0, 15, 0, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     position: relative;
     overflow-y: auto;
     display: flex;
@@ -320,8 +336,16 @@ body.romantic {
 }
 
 .romantic .memory-photo {
-    border-color: var(--romantic-text);
-    box-shadow: 0 0 10px var(--romantic-text);
+    border: 10px solid #fff;
+    border-bottom: 30px solid #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    background-color: #fff;
+    transform: rotate(-3deg);
+    transition: transform 0.3s;
+}
+
+.romantic .memory-photo:hover {
+    transform: scale(1.05) rotate(0deg);
 }
 
 #final-gallery {
@@ -357,8 +381,22 @@ body.romantic {
 
 .gallery-grid img {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 2px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    border: 8px solid #fff;
+    border-bottom: 25px solid #fff;
+    background-color: #fff;
+    transform: rotate(calc(var(--rot, 0) * 1deg));
+    transition: transform 0.3s;
+}
+
+.gallery-grid img:nth-child(1) { --rot: -4; }
+.gallery-grid img:nth-child(2) { --rot: 2; }
+.gallery-grid img:nth-child(3) { --rot: -2; }
+
+.gallery-grid img:hover {
+    transform: scale(1.05) rotate(0deg);
+    z-index: 10;
 }
 
 .video-container {
@@ -411,4 +449,19 @@ body.romantic {
 
 .secret-message p {
     margin: 5px 0;
+}
+
+.floating-heart {
+    position: fixed;
+    bottom: -10vh;
+    font-size: 2rem;
+    z-index: 999;
+    animation: floatUp linear forwards;
+    pointer-events: none;
+}
+
+@keyframes floatUp {
+    to {
+        transform: translateY(-120vh) rotate(360deg);
+    }
 }

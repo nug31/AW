@@ -57,20 +57,31 @@ async function simulateLoading() {
     await new Promise(resolve => setTimeout(resolve, 800));
     document.getElementById('loading-screen').classList.remove('active');
     document.getElementById('terminal').classList.remove('hidden');
+    updateBackground('assets/images/photo1.jpg'); // Set initial background
     currentState = 'login';
     showSequence(messages.login);
 }
 
+const ASCII_ART = `
+██████╗ ███████╗███████╗
+██╔══██╗██╔════╝██╔════╝
+██████╔╝█████╗  █████╗  
+██╔══██╗██╔══╝  ██╔══╝  
+██████╔╝███████╗███████╗
+╚═════╝ ╚══════╝╚══════╝
+`;
+
 const messages = {
     login: [
+        `<div class="ascii-art" style="white-space: pre; font-family: monospace; color: var(--text-color); text-shadow: 0 0 5px var(--glow-color); line-height: 1.2;">${ASCII_ART}</div>`,
         "MENGIKUTI AKSES SISTEM RAHASIA...",
         "MEMUAT FILE MEMORI...",
-        "SELAMAT DATANG DI SERVER ULANG TAHUN AYU WARESTU",
+        "SELAMAT DATANG DI SERVER ULANG TAHUN RAHASIA",
         "MASUKKAN KATA SANDI UNTUK MELANJUTKAN"
     ],
     granted: [
         "AKSES DIIZINKAN",
-        "SELAMAT DATANG DI FILE AYU WARESTU",
+        "SELAMAT DATANG DI FILE RAHASIA",
         "MENDETEKSI TANGGAL ISTIMEWA..."
     ],
     denied: [
@@ -87,12 +98,13 @@ const messages = {
     databaseMenu: [
         "LOVE DATABASE",
         "",
-        "[1] FIRST MEETING",
+        "[1] FIRST DATE",
         "[2] BEST MOMENTS",
         "[3] FAVORITE MEMORIES",
         "[4] SECRET MESSAGE",
+        "[5] SECRET MISSIONS",
         "",
-        "PILIH NOMOR FILE (1-4):"
+        "PILIH NOMOR FILE (1-5):"
     ]
 };
 
@@ -106,9 +118,18 @@ async function typeWriter(text, speed = 50) {
     const p = document.createElement('div');
     output.appendChild(p);
 
+    if (text.startsWith('<') && text.endsWith('>')) {
+        p.innerHTML = text;
+        output.scrollTop = output.scrollHeight;
+        return;
+    }
+
     for (let i = 0; i < text.length; i++) {
         p.textContent += text.charAt(i);
-        // playSound(keypressSound); // Sound disabled if file not found
+        try {
+            keypressSound.currentTime = 0;
+            keypressSound.play().catch(() => { });
+        } catch (e) { }
         await new Promise(resolve => setTimeout(resolve, speed));
     }
     output.scrollTop = output.scrollHeight;
@@ -127,37 +148,6 @@ async function showSequence(sequence) {
     }
 }
 
-function handleInput(e) {
-    if (e.key === 'Enter') {
-        const input = commandInput.value.toUpperCase();
-        commandInput.value = '';
-
-        if (currentState === 'login' || currentState === 'denied') {
-            if (input === PASSWORD) {
-                currentState = 'granted';
-                proceedToCountdown();
-            } else {
-                currentState = 'denied';
-                showSequence(messages.denied);
-            }
-        } else if (currentState === 'database_menu') {
-            handleDatabaseSelection(input);
-        } else if (currentState === 'video_prompt') {
-            if (input === 'Y') {
-                showFinalSurprise();
-            } else {
-                showSequence(["VIDEO UNLOCK CANCELED. TYPE 'Y' TO UNLOCK."]);
-                // Return to prompt slightly faster if rejected
-                setTimeout(triggerVideoPrompt, 3000);
-            }
-        } else if (currentState === 'reading_database') {
-            // press any key (mapped to enter here) to go back to menu
-            showDatabaseMenu();
-        } else if (currentState.startsWith('mission')) {
-            checkMissionAnswer(input);
-        }
-    }
-}
 
 async function proceedToCountdown() {
     await showSequence(messages.granted);
@@ -232,12 +222,12 @@ async function showDatabaseMenu() {
 const missions = [
     {
         question: "MISI 1: DI MANA KITA PERTAMA KALI BERTEMU?",
-        answer: "KAFE",
-        memory: "assets/images/memory1.jpg"
+        answer: "SEKOLAH",
+        memory: "assets/images/5.jpg"
     },
     {
         question: "MISI 2: APA MAKANAN FAVORIT KITA BERDUA?",
-        answer: "SUSHI",
+        answer: "SATE",
         memory: "assets/images/memory2.jpg"
     }
 ];
@@ -249,24 +239,26 @@ function handleInput(e) {
         const input = commandInput.value.toUpperCase().trim();
         commandInput.value = '';
 
+        if (input === 'CLEAR') {
+            output.innerHTML = '';
+            inputLine.classList.remove('hidden');
+            return;
+        }
+
         if (currentState === 'login' || currentState === 'denied') {
             if (input === PASSWORD) {
                 currentState = 'granted';
                 proceedToCountdown();
+            } else if (input === 'HELP') {
+                typeWriter("COMMANDS: HELP, CLEAR, HINT");
+            } else if (input === 'HINT') {
+                typeWriter("HINT: KATA AJAIB UNTUK MENGUNGKAPKAN PERASAAN KITA (TANPA SPASI)");
             } else {
                 currentState = 'denied';
                 showSequence(messages.denied);
             }
         } else if (currentState === 'database_menu') {
             handleDatabaseSelection(input);
-        } else if (currentState === 'video_prompt') {
-            if (input === 'Y') {
-                showFinalSurprise();
-            } else {
-                showSequence(["VIDEO UNLOCK CANCELED. TYPE 'Y' TO UNLOCK."]);
-                // Return to prompt slightly faster if rejected
-                setTimeout(triggerVideoPrompt, 3000);
-            }
         } else if (currentState === 'reading_database') {
             // press any key (mapped to enter here) to go back to menu
             showDatabaseMenu();
@@ -277,6 +269,16 @@ function handleInput(e) {
 }
 
 let databaseCompletion = { 1: false, 2: false, 3: false };
+
+function updateBackground(src) {
+    const bg = document.getElementById('dynamic-bg');
+    if (src) {
+        bg.style.backgroundImage = `url('${src}')`;
+        bg.style.opacity = "0.4";
+    } else {
+        bg.style.backgroundImage = 'none';
+    }
+}
 
 async function handleDatabaseSelection(choice) {
     currentState = 'reading_database';
@@ -296,11 +298,15 @@ async function handleDatabaseSelection(choice) {
         }
         await typeWriter("DEKRIPSI SELESAI.");
 
-        const photoArr = ['memory1.jpg', 'memory2.jpg', 'memory3.jpg'];
-        await showMemory(`assets/images/${photoArr[memoryIndex]}`);
+        const photoArr = ['5.jpeg', '2.jpeg', 'memory2.jpeg'];
+        const photoSrc = `assets/images/${photoArr[memoryIndex]}`;
+        updateBackground(photoSrc);
+        await showMemory(photoSrc);
         await typeWriter("\n-- TEKAN ENTER UNTUK KEMBALI KE MENU --\n");
     } else if (choice === '4') {
         await showSecretMessage();
+    } else if (choice === '5') {
+        startMissions();
     } else {
         await typeWriter("INVALID SELECTION. RETURNING TO MENU...");
         setTimeout(showDatabaseMenu, 1500);
@@ -308,37 +314,40 @@ async function handleDatabaseSelection(choice) {
 }
 
 async function showSecretMessage() {
-    await typeWriter("EXTRACTING secret_message.txt...");
-    await new Promise(resolve => setTimeout(resolve, 1000));
     output.innerHTML = '';
-    const secretDiv = document.createElement('div');
-    secretDiv.className = 'secret-message';
-    secretDiv.innerHTML = `
-        <p>If you are reading this,</p>
-        <p>it means you unlocked my heart.</p>
-        <br>
-        <p>Happy Birthday ❤️</p>
-        <p>Thank you for being part of my life.</p>
-    `;
-    output.appendChild(secretDiv);
+    document.body.classList.add('romantic');
 
-    // Check if ready for video phase
-    if (databaseCompletion[1] && databaseCompletion[2] && databaseCompletion[3]) {
-        setTimeout(triggerVideoPrompt, 4000);
-    } else {
-        await typeWriter("\n-- TEKAN ENTER UNTUK KEMBALI KE MENU --\n");
-    }
-}
+    await typeWriter("SYSTEM MESSAGE:", 100);
+    await typeWriter("SELAMAT ULANG TAHUN SAYANG ❤️", 100);
+    await typeWriter("TERIMA KASIH TELAH DATANG KE HIDUPKU", 50);
+    await typeWriter("KAMU ADALAH MEMORI TERBAIKKU", 50);
+    await typeWriter("DAN MASA DEPANKU YANG PALING INDAH", 50);
 
-async function triggerVideoPrompt() {
-    output.innerHTML = '';
-    currentState = 'video_prompt';
-    await typeWriter("FINAL FILE DETECTED...");
-    await typeWriter("VIDEO_MESSAGE.MP4");
-    await typeWriter("UNLOCK? (Y/N)");
-    inputLine.classList.remove('hidden');
-    commandInput.type = "text";
-    commandInput.focus();
+    confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+
+    updateBackground('assets/images/3.jpeg'); // Set a nice romantic background
+    const bg = document.getElementById('dynamic-bg');
+    bg.style.opacity = "0.6";
+    bg.style.filter = "blur(3px) brightness(0.7)";
+
+    // Play "Tunggal Eka" from the chorus (approx. 1:20 or 80 seconds in)
+    try {
+        const music = document.getElementById('romantic-music');
+        music.src = "assets/sounds/DENNY CAKNAN - TUNGGAL EKA  (Official Music Video) (320).mp3";
+        music.currentTime = 80; // Start at the reff/chorus
+        music.volume = 0.5;
+        music.play().catch(() => { });
+    } catch (e) { }
+
+    createFloatingHearts();
+    showFinalGallery();
+
+    await typeWriter("\n-- TEKAN ENTER UNTUK KEMBALI KE MENU --\n");
+    currentState = 'reading_database';
 }
 
 async function checkMissionAnswer(answer) {
@@ -364,8 +373,9 @@ async function checkMissionAnswer(answer) {
                 startNextMission();
             }, 3000);
         } else {
+            typeWriter("SEMUA MISI SELESAI! MENGAKSES VIDEO RAHASIA...");
             setTimeout(() => {
-                showFinalSurprise();
+                showMissionVideo();
             }, 3000);
         }
     } else {
@@ -405,24 +415,35 @@ function startMissions() {
     typeWriter(missions[currentMissionIndex].question);
 }
 
-async function showFinalSurprise() {
+async function showMissionVideo() {
     output.innerHTML = '';
-    inputLine.classList.add('hidden');
-    document.body.classList.add('romantic');
 
-    await typeWriter("SYSTEM MESSAGE:", 100);
-    await typeWriter("HAPPY BIRTHDAY MY LOVE ❤️", 100);
-    await typeWriter("TERIMA KASIH TELAH DATANG KE HIDUPKU", 50);
-    await typeWriter("KAMU ADALAH MEMORI TERBAIKKU", 50);
-    await typeWriter("DAN MASA DEPANKU YANG PALING INDAH", 50);
+    const videoDiv = document.createElement('div');
+    videoDiv.className = 'video-container';
+    videoDiv.innerHTML = `
+        <video controls autoplay width="100%">
+            <source src="assets/videos/AW.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    `;
+    output.appendChild(videoDiv);
+    output.scrollTop = output.scrollHeight;
 
-    confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 }
-    });
+    await typeWriter("\n-- TEKAN ENTER UNTUK KEMBALI KE MENU --\n");
+    currentState = 'reading_database';
+}
 
-    showFinalGallery();
+function createFloatingHearts() {
+    setInterval(() => {
+        if (!document.body.classList.contains('romantic')) return;
+        const heart = document.createElement('div');
+        heart.className = 'floating-heart';
+        heart.innerText = '❤️';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
+    }, 300);
 }
 
 function showFinalGallery() {
@@ -431,15 +452,14 @@ function showFinalGallery() {
     gallery.innerHTML = `
         <div class="heart-animation">❤️</div>
         <div class="gallery-grid">
-            <img src="assets/images/photo1.jpg" alt="Photo 1">
-            <img src="assets/images/photo2.jpg" alt="Photo 2">
-            <img src="assets/images/photo3.jpg" alt="Photo 3">
-        </div>
-        <div class="video-container">
-            <video controls autoplay width="100%">
-                <source src="assets/videos/birthday.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+            <img src="assets/images/1.jpeg" alt="Photo 1">
+            <img src="assets/images/2.jpeg" alt="Photo 2">
+            <img src="assets/images/3.jpeg" alt="Photo 3">
+            <img src="assets/images/4.jpeg" alt="Photo 4">
+            <img src="assets/images/5.jpeg" alt="Photo 5">
+            <img src="assets/images/6.jpeg" alt="Photo 6">
+            <img src="assets/images/7.jpeg" alt="Photo 7">
+            <img src="assets/images/8.jpeg" alt="Photo 8">
         </div>
     `;
     output.appendChild(gallery);
