@@ -91,7 +91,7 @@ const messages = {
     scanner: [
         "SCANNING HEART...",
         "ANALYZING EMOTIONS...",
-        "LOVE LEVEL: 100%",
+        "LOVE LEVEL: 1000%",
         "STATUS: FOREVER",
         "MEMBUKA LOVE DATABASE..."
     ],
@@ -227,7 +227,7 @@ const missions = [
     },
     {
         question: "MISI 2: APA MAKANAN FAVORIT KITA BERDUA?",
-        answer: "SATE",
+        answer: "NASI GORENG",
         memory: "assets/images/memory2.jpg"
     }
 ];
@@ -298,7 +298,7 @@ async function handleDatabaseSelection(choice) {
         }
         await typeWriter("DEKRIPSI SELESAI.");
 
-        const photoArr = ['5.jpeg', '2.jpeg', 'memory2.jpeg'];
+        const photoArr = ['5.jpeg', '1.jpeg', 'memory2.jpeg'];
         const photoSrc = `assets/images/${photoArr[memoryIndex]}`;
         updateBackground(photoSrc);
         await showMemory(photoSrc);
@@ -319,9 +319,12 @@ async function showSecretMessage() {
 
     await typeWriter("SYSTEM MESSAGE:", 100);
     await typeWriter("SELAMAT ULANG TAHUN SAYANG ❤️", 100);
-    await typeWriter("TERIMA KASIH TELAH DATANG KE HIDUPKU", 50);
-    await typeWriter("KAMU ADALAH MEMORI TERBAIKKU", 50);
-    await typeWriter("DAN MASA DEPANKU YANG PALING INDAH", 50);
+    await typeWriter("TERIMA KASIH TELAH DATANG KE HIDUPKU BEE", 50);
+    await typeWriter("TERIMA KASIH SUDAH MAU MENERIMA AKU DAN KELUARGAKU", 50);
+    await typeWriter("TERIMA KASIH SUDAH SABAR MENGHADAPI KEKURANGANKU", 50);
+    await typeWriter("SEHAT SELALU YA SAYANG", 50);
+    await typeWriter("SEMOGA SELALU DALAM LINDUNGAN ALLAH SWT", 50);
+    await typeWriter("TERIMA KASIH BEE LOVE YOUUU", 50);
 
     confetti({
         particleCount: 150,
