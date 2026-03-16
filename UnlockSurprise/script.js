@@ -162,7 +162,7 @@ function startCountdown() {
     const timerDiv = document.getElementById('countdown-timer');
 
     // Set target date (e.g., 2026-03-22)
-    const targetDate = new Date("March 10, 2026 00:00:00").getTime();
+    const targetDate = new Date("March 17, 2026 00:00:00").getTime();
 
     const interval = setInterval(() => {
         const now = new Date().getTime();
